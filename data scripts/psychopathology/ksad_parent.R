@@ -8,9 +8,6 @@ ksad_p = load_instrument("abcd_ksad01",abcd_files_path)
 #555 and 888 will be treated as NA
 ksad_p[ksad_p == "888" | ksad_p == "555"] = NA
 
-ksad_p = droplevels(ksad_p)
-
-
 
 
 #################### externalizing symptom #################### 
@@ -188,20 +185,19 @@ externalize_ksad_p$ksads_externalizing_exclude_attentation_symptoms_sum = extern
 #remove temp 
 externalize_ksad_p = externalize_ksad_p[,!( grepl("temp_", colnames(externalize_ksad_p)))]
 
+externalize_ksad_p$ksads_bullies_others_present_symptom = externalize_ksad_p$ksads_16_104_p
+externalize_ksad_p$ksads_bullies_others_past_symptom = externalize_ksad_p$ksads_16_105_p
+externalize_ksad_p$ksads_bullies_others_symptom = (externalize_ksad_p$ksads_bullies_others_past_symptom | externalize_ksad_p$ksads_bullies_others_present_symptom)*1
+#remove ksads symptoms 
+externalize_ksad_p = externalize_ksad_p[,!( grepl("ksads_1", colnames(externalize_ksad_p)))]
 
 
-summary(externalize_ksad_p[externalize_ksad_p$eventname == "baseline_year_1_arm_1",]) 
-summary(externalize_ksad_p[externalize_ksad_p$eventname == "1_year_follow_up_y_arm_1",]) 
-
-write.csv(file = "outputs/externalize_ksad_symptoms_p.csv",x = externalize_ksad_p, row.names=F, na = "")
+summary(externalize_ksad_p[externalize_ksad_p$eventname == "2_year_follow_up_y_arm_1",]) 
 
 
 #################### externalizing Diagnosis #################### 
 #unlike suicide, here if 0 or NA then 0
 externalize_diagnosis = ksad_p[,which(grepl("^(src|inter|event|sex|ksads_1[4-6]_(8|9)(0|5|9)[0-9]_)", colnames(ksad_p)))]
-
-externalize_diagnosis$ksads_ADHD_Diagnosis = apply(externalize_diagnosis[,which(grepl("ksads_14_(85[3-6])", colnames(externalize_diagnosis)))],1 ,function(x) {any(x == 1)*1})
-print(summary(externalize_diagnosis[,which(grepl("ksads_ADHD_Diagnosis|ksads_14_(85[3-6])", colnames(externalize_diagnosis)))]))
 
 externalize_diagnosis$ksads_ODD_Diagnosis = apply(externalize_diagnosis[,which(grepl("ksads_15_(901|902)", colnames(externalize_diagnosis)))],1 , function(x) {any(x == 1)*1})
 print(summary(externalize_diagnosis[,which(grepl("ksads_ODD_Diagnosis|ksads_15_(901|902)", colnames(externalize_diagnosis)))]))
@@ -209,19 +205,13 @@ print(summary(externalize_diagnosis[,which(grepl("ksads_ODD_Diagnosis|ksads_15_(
 externalize_diagnosis$ksads_CONDUCT_Diagnosis = apply(externalize_diagnosis[,which(grepl("ksads_16_(897|898|899|900)", colnames(externalize_diagnosis)))],1 ,function(x) {any(x == 1)*1})
 print(summary(externalize_diagnosis[,which(grepl("ksads_CONDUCT_Diagnosis|ksads_16_(897|898|899|900)", colnames(externalize_diagnosis)))]))
 
-externalize_diagnosis$ksads_any_externalizing_diagnosis = (externalize_diagnosis$ksads_ADHD_Diagnosis | externalize_diagnosis$ksads_ODD_Diagnosis | externalize_diagnosis$ksads_CONDUCT_Diagnosis)*1
+externalize_diagnosis$ksads_any_externalizing_diagnosis = (externalize_diagnosis$ksads_ODD_Diagnosis | externalize_diagnosis$ksads_CONDUCT_Diagnosis)*1
 
 
-# externalize_ksad_p$ksads_Alcohol_Substance_Diagnosis = apply(externalize_ksad_p[,which(grepl("ksads_(19|20)_8[7-9][0-9]", colnames(externalize_ksad_p)))],1 ,function(x) {any(x == 1)*1})
-# print(summary(externalize_ksad_p[,which(grepl("ksads_Alcohol_Substance_Diagnosis|ksads_(19|20)_8[7-9][0-9]", colnames(externalize_ksad_p)))]))
+#remove ksads diagnosis 
+externalize_diagnosis = externalize_diagnosis[,!( grepl("ksads_1", colnames(externalize_diagnosis)))]
 
-
-summary(externalize_diagnosis[externalize_diagnosis$eventname == "baseline_year_1_arm_1",]) 
-summary(externalize_diagnosis[externalize_diagnosis$eventname == "1_year_follow_up_y_arm_1",]) 
-
-write.csv(file = "outputs/externalize_ksad_diagnosis_p.csv",x = externalize_diagnosis, row.names=F, na = "")
-
-
+summary(externalize_diagnosis[externalize_diagnosis$eventname == "2_year_follow_up_y_arm_1",]) 
 
 
 
@@ -242,6 +232,12 @@ ptsd$ksads_ptsd_distress = (ptsd$ksads_21_139_p | ptsd$ksads_21_140_p)*1
 ptsd$ksads_ptsd_symptoms_summary = rowSums(ptsd[,c("ksads_ptsd_nightmares", "ksads_ptsd_avoidance","ksads_ptsd_distress")])
 
 
+
+
+externalize_dataset = merge(externalize_ksad_p, externalize_diagnosis)
+externalize_dataset = merge(externalize_dataset, ptsd)
+
+write.csv(file = "outputs/externalize_dataset.csv",x = externalize_dataset, row.names=F, na = "")
 
 
 

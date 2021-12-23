@@ -45,15 +45,14 @@ input_list_eur = Sys.glob(paths = c(paste(prs_files_path,"*ABCD_EUR*.txt",sep=""
 afr_data = load_psr(input_list_afr)
 eur_data = load_psr(input_list_eur)
 
-write.csv(file = "outputs/prs_afr.csv",x = afr_data,row.names=F, na = "")
-write.csv(file = "outputs/prs_eur.csv",x = eur_data,row.names=F, na = "")
-
-
 
 afr_data$genetic_afr = 1
 eur_data$genetic_afr = 0
 
 genetic = rbind.fill(eur_data,afr_data)
+
+colnames(genetic)[colnames(genetic) == "SEX"] = "SEX_genetics"
+colnames(genetic)[colnames(genetic) == "FID"] = "FID_genetics"
 
 write.csv(file = "outputs/genetic.csv",x = genetic, row.names=F, na = "")
 

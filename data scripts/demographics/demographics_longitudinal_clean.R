@@ -10,6 +10,7 @@ source("config.R")
 source("utility_fun.R")
 
 demographics_set = load_instrument("abcd_lpds01",abcd_files_path)
+demographics_set[demographics_set == 777 | demographics_set == 999] = NA
 
 
 ########### rearrange data ########### 
