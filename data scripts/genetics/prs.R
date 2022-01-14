@@ -51,8 +51,8 @@ eur_data$genetic_afr = 0
 
 genetic = rbind.fill(eur_data,afr_data)
 
-colnames(genetic)[colnames(genetic) == "SEX"] = "SEX_genetics"
-colnames(genetic)[colnames(genetic) == "FID"] = "FID_genetics"
+ids = which(colnames(genetic) %in% c("FID", "SEX"))
+colnames(genetic)[ids] = paste0(colnames(genetic)[ids], "_genetic")
 
 write.csv(file = "outputs/genetic.csv",x = genetic, row.names=F, na = "")
 
