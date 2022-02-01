@@ -18,7 +18,7 @@ physicalhealth <- read_csv("outputs/physicalhealth.csv")
 psychopathology <- read_csv("outputs/psychopathology.csv")
 psychopathology_sum <- read_csv("outputs/psychopathology_sum_scores.csv")
 suicide_set <- read_csv("outputs/suicide_set.csv")
-
+site <-read_csv("outputs/site.csv")
 
 
 dataset = merge(demographics_long, BMI, all = T)
@@ -33,6 +33,7 @@ dataset = merge(dataset, physicalhealth, all = T)
 dataset = merge(dataset, psychopathology, all = T)
 dataset = merge(dataset, psychopathology_sum, all = T)
 dataset = merge(dataset, suicide_set, all = T)
+dataset = merge(dataset, site, all = T)
 
 
 # keep only relevant timepoints
@@ -55,8 +56,7 @@ dataset_wide = merge(dataset_wide, genetic , all.x= T)
 
 set.seed(131)
 library(data.table)
-one_family_member = setDT(dataset_wide)[, sample(src_subject_id, 1) ,by = rel_family_id]
-
+one_family_member = setDT(dataset_wide)[, .SD[sample(x = .N, size = 1)] ,by = rel_family_id]
 
 write.csv(file = "outputs/dataset_bully.csv",x = dataset_wide, row.names = F, na = "")
 write.csv(file = "outputs/one_family_member.csv",x = one_family_member, row.names = F, na = "")

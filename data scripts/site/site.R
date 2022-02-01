@@ -42,9 +42,8 @@ site$site_id_l[site$src_subject_id == "NDAR_INVY92TEZW6" & site$eventname == "ba
 # site$site_id_l[site$src_subject_id == "NDAR_INVY92TEZW6" & site$eventname == "1_year_follow_up_y_arm_1"] = "site13"
 
 
-
 site$site_id_l_br = sub("site","",site$site_id_l)
-site[,c("sched_delay", "sched_hybrid", "site_id_l")] = NULL
+site[,c("sched_delay", "site_id_l")] = NULL
 
 write.csv(file = "outputs/site.csv",x = site, row.names = F, na = "")
 
