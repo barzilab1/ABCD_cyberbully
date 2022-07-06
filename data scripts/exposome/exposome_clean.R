@@ -27,8 +27,9 @@ pnsc01 = pnsc01[, !(colnames(pnsc01) %in% c("nei_p_select_language___1"))]
 
 ########### Youth Life Events ###########
 yle01 = load_instrument("abcd_yle01",abcd_files_path)
+yle01[yle01 ==6 | yle01 == 7 ] = NA
+yle01 = yle01[yle01$eventname %in% c("1_year_follow_up_y_arm_1", "2_year_follow_up_y_arm_1"),]
 
-summary(yle01[yle01$eventname == "2_year_follow_up_y_arm_1",])
 
 
 ########### family relationship section ########### 
